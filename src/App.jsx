@@ -11,7 +11,7 @@ import About from './pages/About';
 
 function App() {
   return (
-    <BrowserRouter>
+   <BrowserRouter basename="/k-prakash/">
       <div className="min-h-screen flex flex-col">
         <Header />
         <div className="flex flex-1">
