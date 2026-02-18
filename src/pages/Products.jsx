@@ -18,6 +18,7 @@ import { GiFarmTractor, GiChemicalDrop, GiSpray } from 'react-icons/gi';
 const Products = () => {
     const [sortBy, setSortBy] = useState('popular');
     const [selectedCategory, setSelectedCategory] = useState('all');
+    const [searchTerm, setSearchTerm] = useState('');
 
     const categories = [
         { id: 'all', name: 'All Products', icon: <FaFire />, count: 320 },
@@ -242,9 +243,16 @@ const Products = () => {
     };
 
     const sortedProducts = sortProducts(filteredProducts);
+    const filteredAndSearchedProducts = products.filter(product => {
+       const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
+       const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         product.description.toLowerCase().includes(searchTerm.toLowerCase());
+        return matchesCategory && matchesSearch;
+     });
 
+    const sortedAndSearchedProducts = sortProducts(filteredAndSearchedProducts);
     return (
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto px-4">
             <div className="mb-8">
                 <h1 className="text-3xl font-bold text-green-800 mb-2">Our Products</h1>
                 <p className="text-green-600">Premium agricultural equipment and supplies</p>
@@ -259,6 +267,8 @@ const Products = () => {
                             <input
                                 type="text"
                                 placeholder="Search products..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
                                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                             />
                         </div>
@@ -281,162 +291,175 @@ const Products = () => {
                         </select>
                     </div>
                 </div>
-            </div>
 
-            <div className="flex flex-col lg:flex-row gap-8">
-                {/* Categories Sidebar */}
-                <div className="lg:w-1/4">
-                    <div className="bg-white rounded-xl shadow-lg p-6 sticky top-24">
-                        <h3 className="text-lg font-semibold text-green-800 mb-4 flex items-center">
+                {/* Categories at the top */}
+                <div className="mt-6 border-t pt-6">
+                    <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-semibold text-green-800 flex items-center">
                             <FaFilter className="mr-2" />
                             Categories
                         </h3>
-                        <div className="space-y-2">
-                            {categories.map(category => (
-                                <button
-                                    key={category.id}
-                                    onClick={() => setSelectedCategory(category.id)}
-                                    className={`w-full flex items-center justify-between p-3 rounded-lg transition-colors ${selectedCategory === category.id
-                                        ? 'bg-green-100 text-green-800'
-                                        : 'hover:bg-gray-50 text-gray-700'
-                                        }`}
-                                >
-                                    <div className="flex items-center space-x-3">
-                                        <span className="text-lg">{category.icon}</span>
-                                        <span>{category.name}</span>
-                                    </div>
-                                    <div className="flex items-center space-x-2">
-                                        <span className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">
-                                            {category.count}
-                                        </span>
-                                        {selectedCategory === category.id && <FaChevronRight />}
-                                    </div>
-                                </button>
-                            ))}
-                        </div>
-
-                        {/* WhatsApp Quick Order */}
-                        <div className="mt-8 p-4 bg-green-50 rounded-lg">
-                            <div className="flex items-center space-x-2 mb-2">
-                                <FaWhatsapp className="text-green-600" />
-                                <h4 className="font-semibold text-green-800">Quick WhatsApp Order</h4>
-                            </div>
-                            <p className="text-sm text-green-700 mb-3">
-                                Can't find what you need? Message us directly on WhatsApp.
-                            </p>
-                            <a
-                                href="https://wa.me/919876543210"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center justify-center w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg transition-colors"
+                        <a
+                            href="https://wa.me/919876543210"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors text-sm"
+                        >
+                            <FaWhatsapp className="mr-2" />
+                            Quick WhatsApp Order
+                        </a>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                        {categories.map(category => (
+                            <button
+                                key={category.id}
+                                onClick={() => {
+                                    setSelectedCategory(category.id);
+                                    setSearchTerm(''); // Clear search when changing category
+                                }}
+                                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${selectedCategory === category.id
+                                    ? 'bg-green-100 text-green-800 border-2 border-green-500'
+                                    : 'bg-gray-50 hover:bg-gray-100 text-gray-700 border border-gray-200'
+                                    }`}
                             >
-                                <FaWhatsapp className="mr-2" />
-                                Message on WhatsApp
-                            </a>
-                        </div>
+                                <span className="text-lg">{category.icon}</span>
+                                <span>{category.name}</span>
+                                <span className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full ml-1">
+                                    {category.count}
+                                </span>
+                            </button>
+                        ))}
                     </div>
                 </div>
+            </div>
 
-                {/* Products Grid */}
-                <div className="lg:w-3/4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {sortedProducts.map(product => (
-                            <div key={product.id} className="bg-white rounded-xl shadow-lg border hover:shadow-xl transition-all hover:-translate-y-1">
-                                <div className="p-6">
-                                    {/* Product Image */}
-                                    <div className="relative mb-4">
-                                        <div
-                                            className="h-48 bg-gray-100 rounded-lg flex items-center justify-center bg-cover bg-center"
-                                            style={{
-                                                backgroundImage: product.image ? `url(${product.image})` : 'none',
-                                                backgroundBlendMode: 'overlay',
-                                                backgroundColor: product.image ? 'rgba(0,0,0,0.1)' : '#f3f4f6'
-                                            }}
-                                        >
-                                            <div className={`${product.image ? '*:backdrop-blur-sm p-4 rounded-lg' : ''}`}>
-                                                <div className="text-4xl text-green-500">
-                                                    {product.category === 'tractors' && <GiFarmTractor />}
-                                                    {product.category === 'fertilizers' && <FaLeaf />}
-                                                    {product.category === 'pesticides' && <GiChemicalDrop />}
-                                                    {product.category === 'irrigation' && <FaTruck />}
-                                                    {product.category === 'tools' && <FaShieldAlt />}
-                                                    {product.category === 'seeds' && <FaLeaf />}
-                                                </div>
+            {/* Results count */}
+            <div className="mb-4 text-gray-600">
+                Showing {sortedAndSearchedProducts.length} products
+            </div>
+
+            {/* Products Grid - 4 columns on large screens */}
+            {sortedAndSearchedProducts.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {sortedAndSearchedProducts.map(product => (
+                        <div key={product.id} className="bg-white rounded-xl shadow-lg border hover:shadow-xl transition-all hover:-translate-y-1">
+                            <div className="p-4">
+                                {/* Product Image */}
+                                <div className="relative mb-4">
+                                    <div
+                                        className="h-40 bg-gray-100 rounded-lg flex items-center justify-center bg-cover bg-center"
+                                        style={{
+                                            backgroundImage: product.image ? `url(${product.image})` : 'none',
+                                            backgroundBlendMode: 'overlay',
+                                            backgroundColor: product.image ? 'rgba(0,0,0,0.1)' : '#f3f4f6'
+                                        }}
+                                    >
+                                        <div className={`${product.image ? '*:backdrop-blur-sm p-4 rounded-lg' : ''}`}>
+                                            <div className="text-4xl text-green-500">
+                                                {product.category === 'tractors' && <GiFarmTractor />}
+                                                {product.category === 'fertilizers' && <FaLeaf />}
+                                                {product.category === 'pesticides' && <GiChemicalDrop />}
+                                                {product.category === 'irrigation' && <FaTruck />}
+                                                {product.category === 'tools' && <FaShieldAlt />}
+                                                {product.category === 'seeds' && <FaLeaf />}
+                                                {product.category === 'Sprayer' && <GiSpray />}
                                             </div>
                                         </div>
-                                        {product.originalPrice && (
-                                            <span className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
-                                                Save ₹{parseInt(product.originalPrice.replace(/[^0-9]/g, '')) - parseInt(product.price.replace(/[^0-9]/g, ''))}
+                                    </div>
+                                    {product.originalPrice && (
+                                        <span className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
+                                            Save ₹{parseInt(product.originalPrice.replace(/[^0-9]/g, '')) - parseInt(product.price.replace(/[^0-9]/g, ''))}
+                                        </span>
+                                    )}
+                                </div>
+
+                                {/* Product Info */}
+                                <div>
+                                    <span className="inline-block px-2 py-1 text-xs font-semibold bg-green-100 text-green-800 rounded-full mb-2">
+                                        {product.category.charAt(0).toUpperCase() + product.category.slice(1)}
+                                    </span>
+                                    <h3 className="text-base font-semibold text-gray-800 mb-1 line-clamp-1">{product.name}</h3>
+                                    <p className="text-gray-600 text-xs mb-2 line-clamp-2">{product.description}</p>
+
+                                    {/* Rating */}
+                                    <div className="flex items-center space-x-1 mb-2">
+                                        <div className="flex">
+                                            {[...Array(5)].map((_, i) => (
+                                                <FaStar key={i} className={`text-xs ${i < Math.floor(product.rating) ? 'text-yellow-500' : 'text-gray-300'
+                                                    }`} />
+                                            ))}
+                                        </div>
+                                        <span className="text-gray-600 text-xs">({product.reviews})</span>
+                                    </div>
+
+                                    {/* Features - Show max 2 features */}
+                                    <div className="flex flex-wrap gap-1 mb-3">
+                                        {product.features.slice(0, 2).map((feature, index) => (
+                                            <span key={index} className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded">
+                                                {feature}
+                                            </span>
+                                        ))}
+                                        {product.features.length > 2 && (
+                                            <span className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded">
+                                                +{product.features.length - 2}
                                             </span>
                                         )}
                                     </div>
 
-                                    {/* Product Info */}
-                                    <div>
-                                        <span className="inline-block px-3 py-1 text-xs font-semibold bg-green-100 text-green-800 rounded-full mb-2">
-                                            {product.category.charAt(0).toUpperCase() + product.category.slice(1)}
-                                        </span>
-                                        <h3 className="text-lg font-semibold text-gray-800 mb-2">{product.name}</h3>
-                                        <p className="text-gray-600 text-sm mb-3">{product.description}</p>
-
-                                        {/* Rating */}
-                                        <div className="flex items-center space-x-1 mb-3">
-                                            <div className="flex">
-                                                {[...Array(5)].map((_, i) => (
-                                                    <FaStar key={i} className={`text-sm ${i < Math.floor(product.rating) ? 'text-yellow-500' : 'text-gray-300'
-                                                        }`} />
-                                                ))}
-                                            </div>
-                                            <span className="text-gray-600 text-sm">({product.reviews})</span>
-                                        </div>
-
-                                        {/* Features */}
-                                        <div className="flex flex-wrap gap-2 mb-4">
-                                            {product.features.map((feature, index) => (
-                                                <span key={index} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
-                                                    {feature}
+                                    {/* Price and Actions */}
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <span className="text-lg font-bold text-green-700">{product.price}</span>
+                                            {product.originalPrice && (
+                                                <span className="ml-1 text-gray-500 line-through text-xs block">
+                                                    {product.originalPrice}
                                                 </span>
-                                            ))}
+                                            )}
                                         </div>
-
-                                        {/* Price and Actions */}
-                                        <div className="flex items-center justify-between">
-                                            <div>
-                                                <span className="text-2xl font-bold text-green-700">{product.price}</span>
-                                                {product.originalPrice && (
-                                                    <span className="ml-2 text-gray-500 line-through text-sm">
-                                                        {product.originalPrice}
-                                                    </span>
-                                                )}
-                                            </div>
-                                            <div className="flex space-x-2">
-                                                <button className="p-2 hover:bg-green-100 rounded-lg text-green-600">
-                                                    <FaShoppingCart />
-                                                </button>
-                                                <a
-                                                    href={`https://wa.me/919876543210?text=Interested in: ${encodeURIComponent(product.name)} - ${product.price}`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="p-2 hover:bg-green-100 rounded-lg text-green-600"
-                                                >
-                                                    <FaWhatsapp />
-                                                </a>
-                                            </div>
+                                        <div className="flex space-x-1">
+                                            <button className="p-1.5 hover:bg-green-100 rounded-lg text-green-600">
+                                                <FaShoppingCart size={16} />
+                                            </button>
+                                            <a
+                                                href={`https://wa.me/919876543210?text=Interested in: ${encodeURIComponent(product.name)} - ${product.price}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="p-1.5 hover:bg-green-100 rounded-lg text-green-600"
+                                            >
+                                                <FaWhatsapp size={16} />
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        ))}
-                    </div>
-
-                    {/* Load More */}
-                    <div className="text-center mt-8">
-                        <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
-                            Load More Products
-                        </button>
-                    </div>
+                        </div>
+                    ))}
                 </div>
-            </div>
+            ) : (
+                <div className="text-center py-12 bg-white rounded-xl shadow-lg">
+                    <div className="text-6xl mb-4">🔍</div>
+                    <h3 className="text-xl font-semibold text-gray-800 mb-2">No products found</h3>
+                    <p className="text-gray-600">Try adjusting your search or filter to find what you're looking for.</p>
+                    <button 
+                        onClick={() => {
+                            setSearchTerm('');
+                            setSelectedCategory('all');
+                        }}
+                        className="mt-4 bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition-colors"
+                    >
+                        Clear all filters
+                    </button>
+                </div>
+            )}
+
+            {/* Load More - Only show if there are products */}
+            {sortedAndSearchedProducts.length > 0 && (
+                <div className="text-center mt-8">
+                    <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                        Load More Products
+                    </button>
+                </div>
+            )}
         </div>
     );
 };

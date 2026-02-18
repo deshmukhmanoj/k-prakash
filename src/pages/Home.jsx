@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
     FaArrowRight,
@@ -12,13 +12,16 @@ import {
     FaSeedling,
     FaWater,
     FaBox,
-    FaCertificate
+    FaCertificate,
+    FaPause,
+    FaPlay
 } from 'react-icons/fa';
 import { GiFarmTractor, GiChemicalDrop } from 'react-icons/gi';
 import { FaQrcode } from "react-icons/fa";
 
 const Home = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
+    const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
     const slides = [
         {
@@ -26,7 +29,7 @@ const Home = () => {
             description: 'Quality equipment, fertilizers, and pesticides for modern farming',
             cta: 'Browse Products',
             link: '/products',
-            color: 'from-green-800 to-green-600',
+            color: 'from-green-900/90 to-green-700/90',
             icon: <GiFarmTractor className="text-6xl mb-4" />,
             img: 'https://www.knowledge-sourcing.com/resources/wp-content/uploads/2024/09/fertilizer-market.webp'
         },
@@ -35,7 +38,7 @@ const Home = () => {
             description: 'Latest machinery available for rent at competitive prices',
             cta: 'View Equipment',
             link: '/categories?type=tractors',
-            color: 'from-blue-800 to-blue-600',
+            color: 'from-blue-900/90 to-blue-700/90',
             icon: <FaTruck className="text-6xl mb-4" />,
             img: 'https://geartap.in/api/image/07831eed-355d-49dd-93d0-e45a9f39213a.webp'
         },
@@ -44,11 +47,32 @@ const Home = () => {
             description: 'Certified chemicals and organic fertilizers for optimal yield',
             cta: 'Shop Now',
             link: '/categories?type=fertilizers',
-            color: 'from-amber-800 to-amber-600',
+            color: 'from-amber-900/90 to-amber-700/90',
             icon: <GiChemicalDrop className="text-6xl mb-4" />,
             img: 'https://5.imimg.com/data5/SELLER/Default/2024/9/447793768/TP/WH/DU/14661396/chemical-npk-fertilizer-500x500.jpg'
         }
     ];
+
+    // Auto-slider functionality
+    useEffect(() => {
+        let interval;
+        if (isAutoPlaying) {
+            interval = setInterval(() => {
+                setCurrentSlide((prev) => (prev + 1) % slides.length);
+            }, 5000); // Change slide every 5 seconds
+        }
+        return () => clearInterval(interval);
+    }, [isAutoPlaying, slides.length]);
+
+    const handleSlideChange = (index) => {
+        setCurrentSlide(index);
+        // Optional: Pause auto-play when manually changing slides
+        // setIsAutoPlaying(false);
+    };
+
+    const toggleAutoPlay = () => {
+        setIsAutoPlaying(!isAutoPlaying);
+    };
 
     const features = [
         {
@@ -127,38 +151,48 @@ const Home = () => {
 
     return (
         <div>
-            {/* Hero Section */}
-            <div className="relative h-125 rounded-2xl overflow-hidden mb-12">
+            {/* Hero Section with Auto-slider */}
+            <div className="relative h-125 rounded-2xl overflow-hidden mb-12 group">
                 {slides.map((slide, index) => (
                     <div
                         key={index}
-                        className={`absolute inset-0 transition-opacity duration-1000 ${index === currentSlide ? 'opacity-100' : 'opacity-0'}`}
+                        className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                            }`}
                     >
-                        {/* Background Image with Gradient Overlay */}
-                        <div
-                            className="absolute inset-0 bg-cover bg-center"
-                            style={{ backgroundImage: `url(${slide.img})` }}
-                        >
-                            <div className={`absolute inset-0 bg-linear-to-r ${slide.color} opacity-90`}></div>
+                        {/* Background Image with improved blur effect */}
+                        <div className="absolute inset-0">
+                            {/* Main background image */}
+                            <div
+                                className="absolute inset-0 bg-cover bg-center scale-110 filter blur-sm"
+                                style={{ backgroundImage: `url(${slide.img})` }}
+                            ></div>
+                            {/* Gradient overlay for better text readability */}
+                            <div className={`absolute inset-0 bg-linear-to-r ${slide.color}`}></div>
                         </div>
 
-                        <div className="relative h-full flex items-center">
+                        <div className="relative h-full flex items-center z-20">
                             <div className="container mx-auto px-6">
                                 <div className="max-w-2xl text-white">
-                                    <div className="mb-4">{slide.icon}</div>
-                                    <h1 className="text-5xl font-bold mb-4">{slide.title}</h1>
-                                    <p className="text-xl mb-8 opacity-90">{slide.description}</p>
-                                    <div className="flex space-x-4">
+                                    <div className="mb-4 transform transition-transform duration-700 translate-y-0 opacity-100">
+                                        {slide.icon}
+                                    </div>
+                                    <h1 className="text-5xl font-bold mb-4 transform transition-all duration-700 delay-100">
+                                        {slide.title}
+                                    </h1>
+                                    <p className="text-xl mb-8 opacity-90 transform transition-all duration-700 delay-200">
+                                        {slide.description}
+                                    </p>
+                                    <div className="flex space-x-4 transform transition-all duration-700 delay-300">
                                         <Link
                                             to={slide.link}
-                                            className="bg-white text-green-800 hover:bg-green-50 px-6 py-3 rounded-lg font-semibold flex items-center"
+                                            className="bg-white text-green-800 hover:bg-green-50 px-6 py-3 rounded-lg font-semibold flex items-center transition-transform hover:scale-105"
                                         >
                                             {slide.cta}
                                             <FaArrowRight className="ml-2" />
                                         </Link>
                                         <Link
                                             to="/qr-whatsapp"
-                                            className="border-2 border-white text-white hover:bg-white hover:text-green-800 px-6 py-3 rounded-lg font-semibold flex items-center"
+                                            className="border-2 border-white text-white hover:bg-white hover:text-green-800 px-6 py-3 rounded-lg font-semibold flex items-center transition-transform hover:scale-105"
                                         >
                                             <FaWhatsapp className="mr-2" />
                                             Order via WhatsApp
@@ -170,15 +204,36 @@ const Home = () => {
                     </div>
                 ))}
 
-                {/* Slider Controls */}
-                <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                    {slides.map((_, index) => (
-                        <button
-                            key={index}
-                            onClick={() => setCurrentSlide(index)}
-                            className={`w-3 h-3 rounded-full transition-all ${index === currentSlide ? 'bg-white w-8' : 'bg-white/50'}`}
-                        />
-                    ))}
+                {/* Slider Controls with Auto-play Toggle */}
+                <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex items-center space-x-3 z-20">
+                    {/* Auto-play Toggle Button */}
+                    <button
+                        onClick={toggleAutoPlay}
+                        className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-2 rounded-full transition-all"
+                        title={isAutoPlaying ? 'Pause' : 'Play'}
+                    >
+                        {isAutoPlaying ? <FaPause size={12} /> : <FaPlay size={12} />}
+                    </button>
+
+                    {/* Slide Indicators */}
+                    <div className="flex space-x-2">
+                        {slides.map((_, index) => (
+                            <button
+                                key={index}
+                                onClick={() => handleSlideChange(index)}
+                                className={`transition-all duration-300 ${index === currentSlide
+                                        ? 'bg-white w-8 h-3'
+                                        : 'bg-white/50 hover:bg-white/80 w-3 h-3'
+                                    } rounded-full`}
+                                aria-label={`Go to slide ${index + 1}`}
+                            />
+                        ))}
+                    </div>
+                </div>
+
+                {/* Slide Counter (Optional) */}
+                <div className="absolute top-6 right-6 bg-black/30 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm z-20">
+                    {currentSlide + 1} / {slides.length}
                 </div>
             </div>
 
