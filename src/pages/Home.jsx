@@ -51,6 +51,7 @@ const Home = () => {
             icon: <GiChemicalDrop className="text-6xl mb-4" />,
             img: 'https://5.imimg.com/data5/SELLER/Default/2024/9/447793768/TP/WH/DU/14661396/chemical-npk-fertilizer-500x500.jpg'
         }
+
     ];
 
     // Auto-slider functionality
@@ -182,22 +183,22 @@ const Home = () => {
                                     <p className="text-xl mb-8 opacity-90 transform transition-all duration-700 delay-200">
                                         {slide.description}
                                     </p>
-                                    <div className="flex space-x-4 transform transition-all duration-700 delay-300">
-                                        <Link
-                                            to={slide.link}
-                                            className="bg-white text-green-800 hover:bg-green-50 px-6 py-3 rounded-lg font-semibold flex items-center transition-transform hover:scale-105"
-                                        >
-                                            {slide.cta}
-                                            <FaArrowRight className="ml-2" />
-                                        </Link>
-                                        <Link
-                                            to="/qr-whatsapp"
-                                            className="border-2 border-white text-white hover:bg-white hover:text-green-800 px-6 py-3 rounded-lg font-semibold flex items-center transition-transform hover:scale-105"
-                                        >
-                                            <FaWhatsapp className="mr-2" />
-                                            Order via WhatsApp
-                                        </Link>
-                                    </div>
+                                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 transform transition-all duration-700 delay-300">
+  <Link
+    to={slide.link}
+    className="bg-white text-green-800 hover:bg-green-50 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold flex items-center justify-center transition-all hover:scale-105 text-sm sm:text-base shadow-lg hover:shadow-xl"
+  >
+    {slide.cta}
+    <FaArrowRight className="ml-2 text-sm sm:text-base" />
+  </Link>
+  <Link
+    to="/qr-whatsapp"
+    className="border-2 border-white text-white hover:bg-white hover:text-green-800 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-semibold flex items-center justify-center transition-all hover:scale-105 text-sm sm:text-base backdrop-blur-sm bg-white/10"
+  >
+    <FaWhatsapp className="mr-2 text-sm sm:text-base" />
+    Order via WhatsApp
+  </Link>
+</div>
                                 </div>
                             </div>
                         </div>
@@ -205,31 +206,32 @@ const Home = () => {
                 ))}
 
                 {/* Slider Controls with Auto-play Toggle */}
-                <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex items-center space-x-3 z-20">
-                    {/* Auto-play Toggle Button */}
-                    <button
-                        onClick={toggleAutoPlay}
-                        className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-2 rounded-full transition-all"
-                        title={isAutoPlaying ? 'Pause' : 'Play'}
-                    >
-                        {isAutoPlaying ? <FaPause size={12} /> : <FaPlay size={12} />}
-                    </button>
+                <div className="absolute bottom-4 sm:bottom-6 mt-10 left-1/2 transform -translate-x-1/2 flex items-center space-x-2 sm:space-x-3 z-20 bg-black/20 backdrop-blur-sm px-3 py-2 sm:px-4 sm:py-2 rounded-full">
+  {/* Auto-play Toggle Button */}
+  <button
+    onClick={toggleAutoPlay}
+    className="bg-white/20 hover:bg-white/30 text-white p-1.5 sm:p-2 rounded-full transition-all"
+    title={isAutoPlaying ? 'Pause' : 'Play'}
+  >
+    {isAutoPlaying ? <FaPause size={10} className="sm:w-3 sm:h-3" /> : <FaPlay size={10} className="sm:w-3 sm:h-3" />}
+  </button>
 
-                    {/* Slide Indicators */}
-                    <div className="flex space-x-2">
-                        {slides.map((_, index) => (
-                            <button
-                                key={index}
-                                onClick={() => handleSlideChange(index)}
-                                className={`transition-all duration-300 ${index === currentSlide
-                                        ? 'bg-white w-8 h-3'
-                                        : 'bg-white/50 hover:bg-white/80 w-3 h-3'
-                                    } rounded-full`}
-                                aria-label={`Go to slide ${index + 1}`}
-                            />
-                        ))}
-                    </div>
-                </div>
+  {/* Slide Indicators */}
+  <div className="flex space-x-1.5 sm:space-x-2">
+    {slides.map((_, index) => (
+      <button
+        key={index}
+        onClick={() => handleSlideChange(index)}
+        className={`transition-all duration-300 ${
+          index === currentSlide
+            ? 'bg-white w-6 sm:w-8 h-2 sm:h-3'
+            : 'bg-white/50 hover:bg-white/80 w-2 sm:w-3 h-2 sm:h-3'
+        } rounded-full`}
+        aria-label={`Go to slide ${index + 1}`}
+      />
+    ))}
+  </div>
+</div>
 
                 {/* Slide Counter (Optional) */}
                 <div className="absolute top-6 right-6 bg-black/30 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm z-20">
