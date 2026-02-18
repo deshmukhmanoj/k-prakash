@@ -73,11 +73,11 @@ const Header = () => {
             </a>
 
             <a
-              href="tel:+919876543210"
+              href="tel:+917620313921"
               className="hidden md:flex items-center space-x-2 bg-white text-green-800 hover:bg-green-100 px-3 py-2 rounded-lg transition-colors text-sm whitespace-nowrap"
             >
               <FaPhone className="text-xs" />
-              <span>+91 98765 43210</span>
+              <span>+91 7620313921</span>
             </a>
 
             <Link to="/cart" className="relative p-2 hover:bg-green-700 rounded-lg">
